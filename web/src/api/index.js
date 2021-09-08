@@ -55,5 +55,9 @@ export const apiURL = {
   // 用户登陆
   login: `${preffix + noauth}/user/login`,
   // 用户列表
-  userList: `${preffix + auth}/user/list`
+  userList: `${preffix + auth}/user/list`,
+  // 用户信息更新
+  userUpdate: `${preffix}/user/update`,
+  // 用户删除
+  userDelete: `${preffix}/user/delete`,
 }

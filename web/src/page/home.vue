@@ -22,13 +22,6 @@ export default {
     onGoLogin() {
       this.$router.push({ name: "login" });
     },
-    test() {
-      if (this.$user.id) {
-        apiGetData(apiURL.userList).then((resp) => {
-          console.log(resp.data);
-        });
-      }
-    },
   },
 };
 </script>

@@ -8,6 +8,11 @@ const AUTH_PATH = '/auth'
 const USER_PATH = '/user'
 
 const VALIDATOR = {
+  id: function(v) {
+    if (!v) {
+      return 'ID错误'
+    }
+  },
   username: function (v) {
     if (!v) {
       return '用户名不能为空'
@@ -29,6 +34,12 @@ const VALIDATOR = {
       return '密码不能为空'
     }
   },
+  level: function(v) {
+    if (0 < v && v < 10) {
+      return
+    }
+    return '账号级别错误'
+  }
 }
 
 const install = function (app) {
@@ -48,6 +59,53 @@ const install = function (app) {
       if (err.code === 'ER_DUP_ENTRY') {
         return res.send(GetResponseData(CONST_NUM.ERROR, "手机号码已被注册"))
       }
+      res.send(GetResponseData(CONST_NUM.ERROR))
+    })
+  })
+
+  /**
+   * 用户信息编辑
+   */
+   app.post(USER_PATH + '/update', function (req, res) {
+    const { level: authLevel } = req.auth || {}
+    if (authLevel < 8) {
+      return res.send(GetResponseData(CONST_NUM.API_AUTH_LOW))
+    }
+
+    const { id, username, mobile, level = 1} = req.body || {}
+    const errMsg = VALIDATOR.id(id) || VALIDATOR.username(username) || VALIDATOR.mobile(mobile) || VALIDATOR.level(level)
+    if (errMsg) {
+      return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
+    }
+
+    userDao.update(id, username, mobile, level).then(() => {
+      res.send(GetResponseData())
+    }).catch((err) => {
+      if (err.code === 'ER_DUP_ENTRY') {
+        return res.send(GetResponseData(CONST_NUM.ERROR, "手机号码已被注册"))
+      }
+      res.send(GetResponseData(CONST_NUM.ERROR))
+    })
+  })
+
+  /**
+   * 用户删除
+   */
+   app.post(USER_PATH + '/delete', function (req, res) {
+    const { level: authLevel } = req.auth || {}
+    if (authLevel < 8) {
+      return res.send(GetResponseData(CONST_NUM.API_AUTH_LOW))
+    }
+
+    const { id, } = req.body || {}
+    const errMsg = VALIDATOR.id(id)
+    if (errMsg) {
+      return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
+    }
+
+    userDao.delete(id).then(() => {
+      res.send(GetResponseData())
+    }).catch(() => {
       res.send(GetResponseData(CONST_NUM.ERROR))
     })
   })
@@ -92,8 +150,7 @@ const install = function (app) {
       return res.send(GetResponseData(CONST_NUM.ERROR))
     }
     const { page = 1, size = 10 } = req.query || {}
-    const list = await userDao.list(page, size).catch((err) => {
-      console.log(err);
+    const list = await userDao.list(+page, +size).catch(() => {
       return Promise.resolve(null)
     })
 

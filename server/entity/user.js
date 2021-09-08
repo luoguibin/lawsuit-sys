@@ -22,6 +22,16 @@ module.exports = {
     return db.exec(`INSERT INTO user (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`, values)
   },
 
+  update(id, username, mobile, level) {
+    const keys = ['user_name', 'mobile', 'level']
+    const values = [username, mobile, level, id]
+    return db.exec(`UPDATE user SET ${keys.map(v => v + '=?').join(',')} WHERE id=?`, values)
+  },
+
+  delete(id) {
+    return db.exec(`DELETE FROM user WHERE id=?`, id)
+  },
+
   login(mobile, password) {
     const values = [mobile, password]
     return db.exec(`SELECT id, user_name AS username, mobile, level, dept_id AS deptId, post_id AS postId, create_time AS createTime, update_time AS updateTime FROM user WHERE mobile=? AND password=?`, values)

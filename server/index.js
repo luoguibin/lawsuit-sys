@@ -33,8 +33,8 @@ app.use(function (req, res, next) {
         return
       }
       req.auth = {
-        userId: data.userId,
-        uLevel: +data.level
+        id: data.userId,
+        level: +data.level || 1
       }
       next()
     })

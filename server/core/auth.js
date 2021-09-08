@@ -10,6 +10,7 @@ const newToken = function ({ id: userId, level }, options = {}) {
     exp: time + (options.duration || authConfig.expDuration),
     iat: time,
     userId,
+    level,
   }, authConfig.SECRET_KEY)
 }
 
