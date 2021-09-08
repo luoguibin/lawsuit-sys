@@ -75,6 +75,7 @@ export default {
           mobile: this.formData.mobile,
           password: this.formData.password,
         }).then(() => {
+          this.$message.success("注册成功");
           this.onGoLogin();
         });
       });
