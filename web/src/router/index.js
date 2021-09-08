@@ -5,7 +5,8 @@ import PageLogin from "../page/login.vue"
 
 const routes = [
   { path: '/home', name: 'home', component: PageHome },
-  { path: '/login', name: 'login', component: PageLogin }
+  { path: '/login', name: 'login', component: PageLogin },
+  { path: '/:catchAll(.*)', redirect: 'home' },
 ]
 
 const router = createRouter({
