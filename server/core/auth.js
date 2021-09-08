@@ -1,39 +1,15 @@
 const JWT = require('jsonwebtoken')
 const { auth: authConfig } = require('../config')
-const timeUtil = require('../utils/time')
 
-const newToken = function (data = {}) {
-  const { userId, userName, uLevel } = data
-  if (!userId) {
+const newToken = function ({ id: userId, level }, options = {}) {
+  if (!userId || !level) {
     return ''
   }
   const time = Math.floor(Date.now() / 1000)
   return JWT.sign({
-    exp: time + (data.duration || authConfig.expDuration),
+    exp: time + (options.duration || authConfig.expDuration),
     iat: time,
     userId,
-    userName,
-    uLevel
-  }, authConfig.SECRET_KEY)
-}
-
-/**
- * 创建分享的token
- * @param {Object} data
- */
-const newShareToken = function (fromId, shareId, shareModule, shareDuration) {
-  if (!fromId || !shareId || !shareModule || !shareDuration) {
-    return ''
-  }
-  const time = Math.floor(Date.now() / 1000)
-  return JWT.sign({
-    exp: time + 7 * 24 *60 * 60, // (shareDuration || 3600),
-    iat: time,
-    fromId,
-    shareId,
-    shareModule,
-    shareTime: timeUtil.now(),
-    shareDuration
   }, authConfig.SECRET_KEY)
 }
 
@@ -45,7 +21,6 @@ const verify = function (token, call) {
 
 const auth = {
   newToken,
-  newShareToken,
   verify
 }
 

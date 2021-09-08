@@ -24,7 +24,7 @@ export default defineConfig({
       '/sapi': {
         target: 'http://localhost:8282',
         changeOrigin: true,
-        rewrite: path => path.replace(/\/api/, "")
+        rewrite: path => path.replace(/\/sapi/, "")
       }
     }
   }

@@ -4,7 +4,7 @@ const config = {
     port: 3306,
     user: 'root',
     password: 'root123',
-    database: 'sghen_db',
+    database: 'lawsuit_db',
     connectionLimit: 10,
     timezone: 'Asia%2FShanghai',
     dateStrings: true,

@@ -43,11 +43,17 @@ export const apiPostUpload = (url, data, params, call) =>
   })
 
 const preffix = '/sapi'
+const noauth = '/noauth'
+const auth = '/auth'
 
 /**
  * @description 接口地址列表
  */
 export const apiURL = {
+  // 用户注册
+  register: `${preffix + noauth}/user/register`,
   // 用户登陆
-  login: `${preffix}/user/login`,
+  login: `${preffix + noauth}/user/login`,
+  // 用户列表
+  userList: `${preffix + auth}/user/list`
 }

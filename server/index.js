@@ -5,6 +5,7 @@ const { server: configServer } = require("./config/index")
 const { GetResponseData, CONST_NUM } = require('./route/base')
 const timeUtil = require("./util/time")
 const router = require("./route/index")
+const auth = require('./core/auth')
 
 const app = express()
 app.use(cors({
@@ -20,7 +21,7 @@ app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
 
   // 接口鉴权
-  if (req.method === 'POST' || req.path.includes('auth')) {
+  if ((req.method === 'POST' && !req.url.startsWith('/noauth/')) || req.path.startsWith('/auth/')) {
     const token = req.get('Authorization') || req.query.token
     if (!token) {
       res.send(GetResponseData(CONST_NUM.ERROR_TOKEN))
@@ -32,9 +33,8 @@ app.use(function (req, res, next) {
         return
       }
       req.auth = {
-        userId: +data.userId,
-        userName: data.userName,
-        uLevel: +data.uLevel
+        userId: data.userId,
+        uLevel: +data.level
       }
       next()
     })

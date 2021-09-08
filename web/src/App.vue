@@ -1,14 +1,16 @@
-<script setup>
-import { apiPostData, apiURL } from "./api";
-
-apiPostData(apiURL.login).then(resp => {
-  console.log(resp);
-})
-</script>
-
 <template>
   <router-view></router-view>
 </template>
+
+<script>
+export default {
+  name: "App",
+
+  created() {
+    window.app = this;
+  },
+};
+</script>
 
 <style>
 #app {
