@@ -13,7 +13,11 @@
         <el-input v-model="formData.mobile"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="formData.password" type="password"></el-input>
+        <el-input
+          v-model="formData.password"
+          type="password"
+          @keyup.enter="onEnterPassword"
+        ></el-input>
       </el-form-item>
       <el-form-item v-if="isRegister" class="align-center">
         <el-button @click="onGoLogin">取&nbsp;消</el-button>
@@ -61,6 +65,7 @@ export default {
           password: this.formData.password,
         }).then(({ data }) => {
           this.$commit.setUser(data);
+          this.$message.success("登录成功");
           this.$router.push({ name: "home" });
         });
       });
@@ -79,6 +84,11 @@ export default {
           this.onGoLogin();
         });
       });
+    },
+    onEnterPassword() {
+      if (!this.isRegister) {
+        this.onLogin();
+      }
     },
 
     onGoRegister() {

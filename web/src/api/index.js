@@ -60,4 +60,7 @@ export const apiURL = {
   userUpdate: `${preffix}/user/update`,
   // 用户删除
   userDelete: `${preffix}/user/delete`,
+
+  // 行政区划同级列表
+  divisionList: `${preffix}/division/list`
 }

@@ -1,14 +1,15 @@
 import { reactive } from "vue";
 
 export const user = reactive({
-  createTime: "",
-  deptId: "",
   id: "",
-  mobile: "",
-  postId: "",
   token: "",
-  updateTime: "",
   username: "",
+  mobile: "",
+  level: "",
+  deptId: "",
+  postId: "",
+  createTime: "",
+  updateTime: "",
 })
 
 export const commit = {
