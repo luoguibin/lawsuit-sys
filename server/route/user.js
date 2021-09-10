@@ -8,12 +8,12 @@ const AUTH_PATH = '/auth'
 const USER_PATH = '/user'
 
 const VALIDATOR = {
-  id: function(v) {
+  id: function (v = '') {
     if (!v) {
       return 'ID错误'
     }
   },
-  username: function (v) {
+  username: function (v = '') {
     if (!v) {
       return '用户名不能为空'
     }
@@ -21,7 +21,7 @@ const VALIDATOR = {
       return '用户名长度不能超过255'
     }
   },
-  mobile: function (v) {
+  mobile: function (v = '') {
     if (!v) {
       return '手机号码不能为空'
     }
@@ -29,17 +29,27 @@ const VALIDATOR = {
       return '手机号码格式错误'
     }
   },
-  password: function (v) {
+  password: function (v = '') {
     if (!v) {
       return '密码不能为空'
     }
   },
-  level: function(v) {
+  level: function (v = '') {
     if (0 < v && v < 10) {
       return
     }
     return '账号级别错误'
-  }
+  },
+  deptId: function (v = '') {
+    if (!v) {
+      return 'ID错误'
+    }
+  },
+  postId: function (v = '') {
+    if (!v) {
+      return 'ID错误'
+    }
+  },
 }
 
 const install = function (app) {
@@ -66,19 +76,19 @@ const install = function (app) {
   /**
    * 用户信息编辑
    */
-   app.post(USER_PATH + '/update', function (req, res) {
+  app.post(USER_PATH + '/update', function (req, res) {
     const { level: authLevel } = req.auth || {}
     if (authLevel < 8) {
       return res.send(GetResponseData(CONST_NUM.API_AUTH_LOW))
     }
 
-    const { id, username, mobile, level = 1} = req.body || {}
-    const errMsg = VALIDATOR.id(id) || VALIDATOR.username(username) || VALIDATOR.mobile(mobile) || VALIDATOR.level(level)
+    const { id, username, mobile, level = 1, deptId, postId } = req.body || {}
+    const errMsg = VALIDATOR.id(id) || VALIDATOR.username(username) || VALIDATOR.mobile(mobile) || VALIDATOR.level(level) || VALIDATOR.deptId(deptId) || VALIDATOR.postId(postId)
     if (errMsg) {
       return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
     }
 
-    userDao.update(id, username, mobile, level).then(() => {
+    userDao.update(id, username, mobile, level, deptId, postId).then(() => {
       res.send(GetResponseData())
     }).catch((err) => {
       if (err.code === 'ER_DUP_ENTRY') {
@@ -91,7 +101,7 @@ const install = function (app) {
   /**
    * 用户删除
    */
-   app.post(USER_PATH + '/delete', function (req, res) {
+  app.post(USER_PATH + '/delete', function (req, res) {
     const { level: authLevel } = req.auth || {}
     if (authLevel < 8) {
       return res.send(GetResponseData(CONST_NUM.API_AUTH_LOW))

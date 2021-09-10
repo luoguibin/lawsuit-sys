@@ -47,6 +47,26 @@
         <el-form-item label="账号级别" prop="level">
           <el-input v-model="formData.level"></el-input>
         </el-form-item>
+        <el-form-item label="单位" prop="deptId">
+          <el-select v-model="formData.deptId">
+            <el-option
+              v-for="item in options.depts"
+              :key="item.id"
+              :label="item.dictKey"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="部门" prop="postId">
+          <el-select v-model="formData.postId">
+            <el-option
+              v-for="item in options.posts"
+              :key="item.id"
+              :label="item.dictKey"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item class="align-center">
           <el-button @click="editVisible = false">取&nbsp;消</el-button>
           <el-button type="primary" :loading="isSaving" @click="onUpdateUser"
@@ -79,17 +99,26 @@ export default {
         { prop: "createTime", label: "创建时间" },
       ]),
 
+      options: {
+        depts: [],
+        posts: [],
+      },
+
       editVisible: false,
       formData: {
         id: "",
         username: "",
         mobile: "",
         level: "",
+        deptId: "",
+        postId: "",
       },
       formRules: {
         username: { required: true, message: "用户名不能为空" },
         mobile: { required: true, message: "手机号码不能为空" },
         level: { required: true, message: "账号级别不能为空" },
+        deptId: { required: true, message: "单位不能为空" },
+        postId: { required: true, message: "部门不能为空" },
       },
       isSaving: false,
     };
@@ -98,9 +127,30 @@ export default {
   created() {
     window.userManage = this;
     this.getUserList();
+    this.getOptions();
   },
 
   methods: {
+    async getOptions() {
+      const resp = await apiGetData(apiURL.dictDetailByKey, {
+        dictKey: "default_division_id",
+      });
+      if (!resp.data || !resp.data.length) {
+        return;
+      }
+      const defaultDivisionId = resp.data[0].dictValue;
+
+      apiGetData(apiURL.dictListByKey, {
+        dictKey: "dept" + defaultDivisionId,
+      }).then((resp) => {
+        this.options.depts = resp.data;
+      });
+      apiGetData(apiURL.dictListByKey, {
+        dictKey: "post" + defaultDivisionId,
+      }).then((resp) => {
+        this.options.posts = resp.data;
+      });
+    },
     getUserList() {
       this.loading = true;
       apiGetData(apiURL.userList, {

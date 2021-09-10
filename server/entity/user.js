@@ -22,9 +22,9 @@ module.exports = {
     return db.exec(`INSERT INTO user (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`, values)
   },
 
-  update(id, username, mobile, level) {
-    const keys = ['user_name', 'mobile', 'level']
-    const values = [username, mobile, level, id]
+  update(id, username, mobile, level, deptId, postId) {
+    const keys = ['user_name', 'mobile', 'level', 'dept_id', 'post_id']
+    const values = [username, mobile, level, deptId, postId, id]
     return db.exec(`UPDATE user SET ${keys.map(v => v + '=?').join(',')} WHERE id=?`, values)
   },
 

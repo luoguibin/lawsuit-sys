@@ -24,3 +24,13 @@ CREATE TABLE `administrative_division` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ALTER TABLE `administrative_division` ADD INDEX (`id`, `parent_id`, `level`) ;
+
+CREATE TABLE `dictionary` (
+  `id` bigint NOT NULL,
+  `parent_id`  bigint NOT NULL DEFAULT -1,
+  `dict_key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dict_label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dict_value` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remark` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

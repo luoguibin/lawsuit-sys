@@ -62,5 +62,18 @@ export const apiURL = {
   userDelete: `${preffix}/user/delete`,
 
   // 行政区划同级列表
-  divisionList: `${preffix}/division/list`
+  divisionList: `${preffix}/division/list`,
+
+  // 字典列表
+  dictList: `${preffix}/dictionary/list`,
+  // 通过dictKey获取字典详情
+  dictDetailByKey: `${preffix}/dictionary/detail-by-key`,
+  // 通过dictKey获取字典下一级列表
+  dictListByKey: `${preffix}/dictionary/list-by-key`,
+  // 字典创建
+  dictCreate: `${preffix}/dictionary/create`,
+  // 字典更新
+  dictUpdate: `${preffix}/dictionary/update`,
+  // 字典删除
+  dictDelete: `${preffix}/dictionary/delete`,
 }

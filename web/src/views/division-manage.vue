@@ -12,6 +12,7 @@
 
 <script>
 import { apiGetData, apiURL } from "../api";
+import Clipboard from "clipboard";
 
 export default {
   name: "AdministrativeDivision",
@@ -36,8 +37,20 @@ export default {
         });
     },
 
-    onNodeClick(data) {
-      console.log(data.id, data.name);
+    onNodeClick(data, node, instance) {
+      const el = instance.refs.node$ || this.$el;
+      const text = data.name + "::" + data.id;
+      const clip = new Clipboard(el, {
+        text: function () {
+          return text;
+        },
+      });
+      clip.on("success", (e) => {
+        this.$message.success("行政区划信息复制成功");
+        e.clearSelection();
+        clip.destroy();
+      });
+      el.click();
     },
   },
 };
