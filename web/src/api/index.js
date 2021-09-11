@@ -42,7 +42,7 @@ export const apiPostUpload = (url, data, params, call) =>
     }
   })
 
-const preffix = '/sapi'
+const preffix = '/law-api'
 const noauth = '/noauth'
 const auth = '/auth'
 

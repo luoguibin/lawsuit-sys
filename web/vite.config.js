@@ -21,7 +21,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     proxy: {
-      '/sapi': {
+      '/law-api': {
         target: 'http://localhost:8282',
         changeOrigin: true,
         rewrite: path => path.replace(/\/sapi/, "")
