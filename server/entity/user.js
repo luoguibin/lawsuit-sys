@@ -34,7 +34,7 @@ module.exports = {
 
   login(mobile, password) {
     const values = [mobile, password]
-    return db.exec(`SELECT id, user_name AS username, mobile, level, dept_id AS deptId, post_id AS postId, create_time AS createTime, update_time AS updateTime FROM user WHERE mobile=? AND password=?`, values)
+    return db.exec(`SELECT id, user_name AS username, mobile, password, level, dept_id AS deptId, post_id AS postId, create_time AS createTime, update_time AS updateTime FROM user WHERE mobile=?`, values)
   },
 
   list(page, size) {

@@ -1,6 +1,7 @@
 const userDao = require("../entity/user")
 const { GetResponseData, CONST_NUM } = require('./base')
 const timeUtil = require("../util/time")
+const dataUtil = require("../util/data")
 const auth = require("../core/auth")
 
 const NO_AUTH_PATH = '/noauth'
@@ -50,6 +51,14 @@ const VALIDATOR = {
       return 'ID错误'
     }
   },
+  rand: function (v = '') {
+    if (!v) {
+      return 'RAND不能为空'
+    }
+    if (v.length > 10) {
+      return 'RAND长度不能超过255'
+    }
+  }
 }
 
 const install = function (app) {
@@ -124,7 +133,7 @@ const install = function (app) {
    * 用户登录
    */
   app.post(NO_AUTH_PATH + USER_PATH + '/login', function (req, res) {
-    const { mobile, password } = req.body || {}
+    const { mobile, password, rand } = req.body || {}
     const errMsg = VALIDATOR.mobile(mobile) || VALIDATOR.username(password)
     if (errMsg) {
       return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
@@ -135,6 +144,10 @@ const install = function (app) {
       if (!user) {
         return res.send(GetResponseData(CONST_NUM.ERROR, "手机号码未注册或密码错误"))
       }
+      if (dataUtil.md5(user.password + '_' + rand) !== password) {
+        return res.send(GetResponseData(CONST_NUM.ERROR, '用户名或密码错误'))
+      }
+      delete user.password
       user.token = auth.newToken(user)
       res.send(GetResponseData(user))
     }).catch(() => {

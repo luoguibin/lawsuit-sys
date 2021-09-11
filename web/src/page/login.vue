@@ -33,6 +33,8 @@
 
 <script>
 import { apiPostData, apiURL } from "../api";
+import Md5 from "crypto-js/md5";
+import Base64 from "crypto-js/enc-base64";
 
 export default {
   name: "Login",
@@ -60,9 +62,14 @@ export default {
         if (!isOk) {
           return;
         }
+        const rand = Math.random().toString().substr(2, 6);
+        let password = this.formData.password;
+        password = Base64.stringify(Md5(password));
+        password = Base64.stringify(Md5(password + "_" + rand));
         apiPostData(apiURL.login, {
           mobile: this.formData.mobile,
-          password: this.formData.password,
+          password,
+          rand,
         }).then(({ data }) => {
           this.$commit.setUser(data);
           this.$message.success("登录成功");
@@ -78,7 +85,7 @@ export default {
         apiPostData(apiURL.register, {
           username: this.formData.username,
           mobile: this.formData.mobile,
-          password: this.formData.password,
+          password: Base64.stringify(Md5(this.formData.password)),
         }).then(() => {
           this.$message.success("注册成功");
           this.onGoLogin();
