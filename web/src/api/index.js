@@ -58,6 +58,8 @@ export const apiURL = {
   userList: `${preffix + auth}/user/list`,
   // 用户信息更新
   userUpdate: `${preffix}/user/update`,
+  // 用户自身信息更新
+  userUpdateSelf: `${preffix}/user/update-self`,
   // 用户删除
   userDelete: `${preffix}/user/delete`,
 

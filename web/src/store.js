@@ -1,6 +1,6 @@
 import { reactive } from "vue";
 
-export const user = reactive({
+const definedUser = {
   id: "",
   token: "",
   username: "",
@@ -10,19 +10,38 @@ export const user = reactive({
   postId: "",
   createTime: "",
   updateTime: "",
-})
+}
+export const user = reactive({ ...definedUser })
 
 export const commit = {
+  _storeUser() {
+    const info = {}
+    for (const key in definedUser) {
+      if (Object.hasOwnProperty.call(user, key)) {
+        info[key] = user[key]
+      }
+    }
+    localStorage.setItem("ls_user", encodeURIComponent(JSON.stringify(info)))
+  },
   setUser(info = {}, isStore = true) {
-    isStore && localStorage.setItem("ls_user", encodeURIComponent(JSON.stringify(info)))
     for (const key in user) {
       if (Object.hasOwnProperty.call(user, key)) {
         user[key] = info[key];
       }
     }
 
+    isStore && this._storeUser()
+
     user.deptName = ""
     user.postName = ""
+  },
+  updateUser(info = {}) {
+    for (const key in info) {
+      if (Object.hasOwnProperty.call(definedUser, key)) {
+        user[key] = info[key];
+      }
+    }
+    this._storeUser()
   }
 }
 

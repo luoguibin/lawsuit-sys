@@ -22,9 +22,39 @@ module.exports = {
     return db.exec(`INSERT INTO user (${keys.join(',')}) VALUES(${keys.map(() => '?').join(',')})`, values)
   },
 
-  update(id, username, mobile, level, deptId, postId) {
-    const keys = ['user_name', 'mobile', 'level', 'dept_id', 'post_id']
-    const values = [username, mobile, level, deptId, postId, id]
+  update(id, updateTime, username, mobile, level, deptId, postId, password) {
+    const keys = []
+    const values = []
+    if (updateTime) {
+      keys.push('update_time')
+      values.push(updateTime)
+    }
+    if (username) {
+      keys.push('user_name')
+      values.push(username)
+    }
+    if (mobile) {
+      keys.push('mobile')
+      values.push(mobile)
+    }
+    if (level) {
+      keys.push('level')
+      values.push(level)
+    }
+    if (deptId) {
+      keys.push('dept_id')
+      values.push(deptId)
+    }
+    if (postId) {
+      keys.push('post_id')
+      values.push(postId)
+    }
+    if (password) {
+      keys.push('password')
+      values.push(password)
+    }
+
+    values.push(id)
     return db.exec(`UPDATE user SET ${keys.map(v => v + '=?').join(',')} WHERE id=?`, values)
   },
 

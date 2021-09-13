@@ -39,14 +39,13 @@ export default {
     return Dictionary.getDictList("post" + configData.divisionId);
   },
   getDeptName(id) {
-    console.log("config: getDeptName");
     const list = this.getDepts();
-    const item = list.find((o) => o.id === id);
+    const item = list.find((o) => o.id === id) || {};
     return item.dictLabel || item.dictKey;
   },
   getPostName(id) {
     const list = this.getPosts();
-    const item = list.find((o) => o.id === id);
+    const item = list.find((o) => o.id === id) || {};
     return item.dictLabel || item.dictKey;
   },
 }

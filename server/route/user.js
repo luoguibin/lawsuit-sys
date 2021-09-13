@@ -97,12 +97,32 @@ const install = function (app) {
       return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
     }
 
-    userDao.update(id, username, mobile, level, deptId, postId).then(() => {
-      res.send(GetResponseData())
+    const updateTime = timeUtil.getTime(timeUtil.newDate())
+    userDao.update(id, updateTime, username, mobile, level, deptId, postId).then(() => {
+      res.send(GetResponseData({ updateTime }))
     }).catch((err) => {
       if (err.code === 'ER_DUP_ENTRY') {
         return res.send(GetResponseData(CONST_NUM.ERROR, "手机号码已被注册"))
       }
+      res.send(GetResponseData(CONST_NUM.ERROR))
+    })
+  })
+
+  /**
+   * 用户自身信息编辑
+   */
+  app.post(USER_PATH + '/update-self', function (req, res) {
+    const { id } = req.auth || {}
+    const { username, password } = req.body || {}
+    const errMsg = VALIDATOR.username(username) || (password && VALIDATOR.password(password))
+    if (errMsg) {
+      return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
+    }
+
+    const updateTime = timeUtil.getTime(timeUtil.newDate())
+    userDao.update(id, updateTime, username, "", "", "", "", password).then(() => {
+      res.send(GetResponseData({ updateTime }))
+    }).catch(() => {
       res.send(GetResponseData(CONST_NUM.ERROR))
     })
   })

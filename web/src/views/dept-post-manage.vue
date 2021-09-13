@@ -98,7 +98,6 @@ export default {
 
   methods: {
     handleLoad(node, resolve) {
-      console.log(node.data);
       apiGetData(apiURL.dictList, { parentId: node.data.id || -1 })
         .then((resp) => {
           resolve(resp.data);
