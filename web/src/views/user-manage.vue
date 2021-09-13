@@ -80,6 +80,7 @@
 
 <script>
 import { apiGetData, apiPostData, apiURL } from "../api";
+import Config from "../common/config";
 
 export default {
   name: "UserManage",
@@ -132,24 +133,9 @@ export default {
 
   methods: {
     async getOptions() {
-      const resp = await apiGetData(apiURL.dictDetailByKey, {
-        dictKey: "default_division_id",
-      });
-      if (!resp.data || !resp.data.length) {
-        return;
-      }
-      const defaultDivisionId = resp.data[0].dictValue;
-
-      apiGetData(apiURL.dictListByKey, {
-        dictKey: "dept" + defaultDivisionId,
-      }).then((resp) => {
-        this.options.depts = resp.data;
-      });
-      apiGetData(apiURL.dictListByKey, {
-        dictKey: "post" + defaultDivisionId,
-      }).then((resp) => {
-        this.options.posts = resp.data;
-      });
+      await Config.ready();
+      this.options.depts = Config.getDepts();
+      this.options.posts = Config.getPosts();
     },
     getUserList() {
       this.loading = true;

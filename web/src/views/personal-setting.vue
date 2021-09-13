@@ -8,8 +8,11 @@
 </template>
 
 <script>
+import Config from "../common/config";
+
 export default {
   name: "PersonalSetting",
+
   data() {
     return {
       infoColumns: [
@@ -27,8 +30,18 @@ export default {
           },
         },
         { prop: "level", label: "账号级别" },
+        { prop: "deptName", label: "单位" },
+        { prop: "postName", label: "部门" },
       ],
     };
+  },
+
+  created() {
+    Config.ready().then(() => {
+      const user = this.$user;
+      user.deptName = Config.getDeptName(user.deptId);
+      user.postName = Config.getPostName(user.postId);
+    });
   },
 };
 </script>

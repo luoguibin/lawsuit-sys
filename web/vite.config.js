@@ -24,7 +24,7 @@ export default defineConfig({
       '/law-api': {
         target: 'http://localhost:8282',
         changeOrigin: true,
-        rewrite: path => path.replace(/\/sapi/, "")
+        rewrite: path => path.replace(/\/law-api/, "")
       }
     }
   }

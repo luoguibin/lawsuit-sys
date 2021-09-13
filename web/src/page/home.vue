@@ -1,18 +1,23 @@
 <template>
-  <div>
-    <el-dropdown v-if="$user.id" @command="handleCommand">
-      <el-button type="text"
-        >{{ $user.username }}<i class="el-icon-arrow-down"></i
-      ></el-button>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item command="manage">管理</el-dropdown-item>
-          <el-dropdown-item divided command="logout">退出</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
-    <el-button type="text" v-else @click="onGoLogin">请登录</el-button>
-  </div>
+  <el-container>
+    <el-header>
+      <div style="float: right">
+        <el-dropdown v-if="$user.id" @command="handleCommand">
+          <el-button type="text"
+            >{{ $user.username }}<i class="el-icon-arrow-down"></i
+          ></el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="manage">管理</el-dropdown-item>
+              <el-dropdown-item divided command="logout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-button type="text" v-else @click="onGoLogin">请登录</el-button>
+      </div>
+    </el-header>
+    <el-main></el-main>
+  </el-container>
 </template>
 
 <script>
@@ -43,5 +48,8 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.el-container {
+  height: 100%;
+}
 </style>

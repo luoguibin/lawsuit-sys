@@ -13,17 +13,20 @@ export const user = reactive({
 })
 
 export const commit = {
-  setUser(info = {}) {
-    localStorage.setItem("ls_user", encodeURIComponent(JSON.stringify(info)))
+  setUser(info = {}, isStore = true) {
+    isStore && localStorage.setItem("ls_user", encodeURIComponent(JSON.stringify(info)))
     for (const key in user) {
       if (Object.hasOwnProperty.call(user, key)) {
         user[key] = info[key];
       }
     }
+
+    user.deptName = ""
+    user.postName = ""
   }
 }
 
-commit.setUser(JSON.parse(decodeURIComponent(localStorage.getItem("ls_user") || "") || "{}"))
+commit.setUser(JSON.parse(decodeURIComponent(localStorage.getItem("ls_user") || "") || "{}"), false)
 
 export default {
   install: function (app) {
