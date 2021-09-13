@@ -14,7 +14,9 @@
       ></el-input>
     </el-form-item>
     <el-form-item class="align-center" label-width="0">
-      <el-button type="primary" @click="onRegister">确&nbsp;定</el-button>
+      <el-button type="primary" @click="onRegister" :loading="loading"
+        >确&nbsp;定</el-button
+      >
     </el-form-item>
   </el-form>
 </template>
@@ -29,6 +31,7 @@ export default {
 
   data() {
     return {
+      loading: false,
       formData: {
         username: "",
         password: "",
@@ -48,13 +51,19 @@ export default {
         if (!isOk) {
           return;
         }
+
+        this.loading = true;
         apiPostData(apiURL.register, {
           username: this.formData.username,
           mobile: this.formData.mobile,
           password: Base64.stringify(Md5(this.formData.password)),
-        }).then(() => {
-          this.$emit("register");
-        });
+        })
+          .then(() => {
+            this.$emit("register");
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       });
     },
   },

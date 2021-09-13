@@ -11,7 +11,9 @@
       ></el-input>
     </el-form-item>
     <el-form-item class="align-center" label-width="0">
-      <el-button type="primary" @click="onLogin">确&nbsp;定</el-button>
+      <el-button type="primary" @click="onLogin" :loading="loading"
+        >确&nbsp;定</el-button
+      >
     </el-form-item>
   </el-form>
 </template>
@@ -26,6 +28,7 @@ export default {
 
   data() {
     return {
+      loading: false,
       formData: {
         mobile: "",
         password: "",
@@ -47,13 +50,19 @@ export default {
         let password = this.formData.password;
         password = Base64.stringify(Md5(password));
         password = Base64.stringify(Md5(password + "_" + rand));
+
+        this.loading = true;
         apiPostData(apiURL.login, {
           mobile: this.formData.mobile,
           password,
           rand,
-        }).then(({ data }) => {
-          this.$emit("login", data);
-        });
+        })
+          .then(({ data }) => {
+            this.$emit("login", data);
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       });
     },
   },
