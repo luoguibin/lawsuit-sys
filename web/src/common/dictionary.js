@@ -2,6 +2,7 @@ import { apiGetData, apiURL } from "../api";
 
 const dataCache = {}
 const promiseMap = {}
+// window.testDictData = dataCache
 
 export default {
   async load(codes = [], isDetail) {

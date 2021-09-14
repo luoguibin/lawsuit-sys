@@ -1,12 +1,16 @@
 <template>
   <div class="login">
-    <h3>{{$config.sysTitle}}</h3>
+    <h3>{{ $config.sysTitle }}</h3>
 
     <el-tabs v-model="activeTab" type="border-card" :stretch="true">
       <el-tab-pane name="login" label="登&nbsp;录">
         <comp-login @login="handleLogin"></comp-login>
       </el-tab-pane>
-      <el-tab-pane name="register" label="注&nbsp;册">
+      <el-tab-pane
+        v-if="$config.canRegister"
+        name="register"
+        label="注&nbsp;册"
+      >
         <comp-register @register="handleRegister"></comp-register>
       </el-tab-pane>
     </el-tabs>
@@ -32,7 +36,7 @@ export default {
   },
 
   created() {
-    window.login = this
+    window.login = this;
   },
 
   methods: {
