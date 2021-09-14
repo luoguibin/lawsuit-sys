@@ -2,7 +2,7 @@
   <el-tabs v-model="activeTab" type="border-card" tab-position="right">
     <el-tab-pane name="personal-setting" label="个人信息">
       <template #label>
-        <span><i class="el-icon-s-custom"></i> {{ $user.username }}</span>
+        <span><i class="el-icon-s-custom"></i> {{ $user.realName || $user.username }}</span>
       </template>
       <personal-setting v-if="cacheComp['personal-setting']"></personal-setting>
     </el-tab-pane>

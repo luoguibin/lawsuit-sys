@@ -1,5 +1,6 @@
 <template>
   <div class="user-manage">
+    <el-button type="primary" @click="onOpenNewUser">新&nbsp;增</el-button>
     <el-table :data="userList" v-loading="loading" stripe border>
       <el-table-column
         v-for="item in tableColumns"
@@ -29,7 +30,7 @@
 
     <el-dialog
       v-model="editVisible"
-      title="编辑用户信息"
+      :title="formData.id ? '编辑用户信息' : '新增用户信息'"
       :close-on-click-modal="false"
     >
       <el-form
@@ -39,7 +40,13 @@
         label-width="100px"
       >
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="formData.username"></el-input>
+          <el-input
+            v-model="formData.username"
+            :readonly="!!formData.id"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="真实姓名" prop="realName">
+          <el-input v-model="formData.realName"></el-input>
         </el-form-item>
         <el-form-item label="手机号码" prop="mobile">
           <el-input v-model="formData.mobile"></el-input>
@@ -69,7 +76,7 @@
         </el-form-item>
         <el-form-item class="align-center">
           <el-button @click="editVisible = false">取&nbsp;消</el-button>
-          <el-button type="primary" :loading="isSaving" @click="onUpdateUser"
+          <el-button type="primary" :loading="isSaving" @click="onSaveUser"
             >保&nbsp;存</el-button
           >
         </el-form-item>
@@ -81,6 +88,8 @@
 <script>
 import { apiGetData, apiPostData, apiURL } from "../api";
 import Config from "../common/config";
+import Md5 from "crypto-js/md5";
+import Base64 from "crypto-js/enc-base64";
 
 export default {
   name: "UserManage",
@@ -95,6 +104,7 @@ export default {
       tableColumns: Object.freeze([
         { prop: "id", label: "ID" },
         { prop: "username", label: "用户名" },
+        { prop: "realName", label: "真实姓名" },
         { prop: "mobile", label: "手机号码" },
         { prop: "level", label: "账号级别" },
         { prop: "createTime", label: "创建时间" },
@@ -109,6 +119,7 @@ export default {
       formData: {
         id: "",
         username: "",
+        realName: "",
         mobile: "",
         level: "",
         deptId: "",
@@ -116,6 +127,7 @@ export default {
       },
       formRules: {
         username: { required: true, message: "用户名不能为空" },
+        realName: { required: true, message: "真实姓名不能为空" },
         mobile: { required: true, message: "手机号码不能为空" },
         level: { required: true, message: "账号级别不能为空" },
         deptId: { required: true, message: "单位不能为空" },
@@ -193,15 +205,36 @@ export default {
           break;
       }
     },
+    onOpenNewUser() {
+      this.editVisible = true;
+      const fData = this.formData;
+      for (const key in fData) {
+        if (Object.hasOwnProperty.call(fData, key)) {
+          fData[key] = "";
+        }
+      }
+      this.$nextTick(() => {
+        this.$refs.form.clearValidate();
+      });
+    },
 
-    onUpdateUser() {
+    onSaveUser() {
       this.$refs.form.validate((isOk) => {
         if (!isOk) {
           return;
         }
 
         this.isSaving = true;
-        apiPostData(apiURL.userUpdate, this.formData)
+        let url;
+        const params = { ...this.formData };
+        if (params.id) {
+          url = apiURL.userUpdate;
+        } else {
+          url = apiURL.register;
+          params.password = Base64.stringify(Md5("123456"));
+        }
+
+        apiPostData(url, params)
           .then(() => {
             this.$message.success("保存成功");
             this.editVisible = false;
@@ -216,5 +249,10 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.el-form {
+  .el-select {
+    width: 100%;
+  }
+}
 </style>

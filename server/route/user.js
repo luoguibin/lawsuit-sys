@@ -35,8 +35,19 @@ const VALIDATOR = {
       return '密码不能为空'
     }
   },
-  level: function (v = '') {
+  realName: function (v = '') {
+    if (!v) {
+      return '真实姓名不能为空'
+    }
+    if (v.length > 255) {
+      return '真实姓名长度不能超过255'
+    }
+  },
+  level: function (v = '', max) {
     if (0 < v && v < 10) {
+      if (v >= max) {
+        return '账号级别设置值不能超过当前登录用户'
+      }
       return
     }
     return '账号级别错误'
@@ -56,7 +67,7 @@ const VALIDATOR = {
       return 'RAND不能为空'
     }
     if (v.length > 10) {
-      return 'RAND长度不能超过255'
+      return 'RAND长度不能超过10'
     }
   }
 }
@@ -66,17 +77,18 @@ const install = function (app) {
    * 用户注册
    */
   app.post(NO_AUTH_PATH + USER_PATH + '/register', function (req, res) {
-    const { username, mobile, password, deptId = 0, postId = 0 } = req.body || {}
-    const errMsg = VALIDATOR.username(username) || VALIDATOR.mobile(mobile) || VALIDATOR.password(password)
+    const { username, mobile, password, realName, deptId = 0, postId = 0 } = req.body || {}
+    const errMsg = VALIDATOR.username(username) || VALIDATOR.mobile(mobile) || VALIDATOR.password(password) || VALIDATOR.realName(realName)
     if (errMsg) {
       return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
     }
 
-    userDao.create(username, password, mobile, deptId, postId).then(() => {
-      res.send(GetResponseData({ currentTime: timeUtil.getTime() }))
+    const createTime = timeUtil.getTime(timeUtil.newDate())
+    userDao.create(username, password, realName, mobile, deptId, postId, createTime).then(() => {
+      res.send(GetResponseData({ currentTime: createTime }))
     }).catch((err) => {
       if (err.code === 'ER_DUP_ENTRY') {
-        return res.send(GetResponseData(CONST_NUM.ERROR, "手机号码已被注册"))
+        return res.send(GetResponseData(CONST_NUM.ERROR, "手机号码或用户名已被注册"))
       }
       res.send(GetResponseData(CONST_NUM.ERROR))
     })
@@ -91,14 +103,14 @@ const install = function (app) {
       return res.send(GetResponseData(CONST_NUM.API_AUTH_LOW))
     }
 
-    const { id, username, mobile, level = 1, deptId, postId } = req.body || {}
-    const errMsg = VALIDATOR.id(id) || VALIDATOR.username(username) || VALIDATOR.mobile(mobile) || VALIDATOR.level(level) || VALIDATOR.deptId(deptId) || VALIDATOR.postId(postId)
+    const { id, username, mobile, realName, level = 1, deptId, postId } = req.body || {}
+    const errMsg = VALIDATOR.id(id) || VALIDATOR.username(username) || VALIDATOR.mobile(mobile) || VALIDATOR.realName(realName) || VALIDATOR.level(level, authLevel) || VALIDATOR.deptId(deptId) || VALIDATOR.postId(postId)
     if (errMsg) {
       return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
     }
 
     const updateTime = timeUtil.getTime(timeUtil.newDate())
-    userDao.update(id, updateTime, username, mobile, level, deptId, postId).then(() => {
+    userDao.update(id, updateTime, username, mobile, realName, level, deptId, postId).then(() => {
       res.send(GetResponseData({ updateTime }))
     }).catch((err) => {
       if (err.code === 'ER_DUP_ENTRY') {
@@ -113,14 +125,17 @@ const install = function (app) {
    */
   app.post(USER_PATH + '/update-self', function (req, res) {
     const { id } = req.auth || {}
-    const { username, password } = req.body || {}
-    const errMsg = VALIDATOR.username(username) || (password && VALIDATOR.password(password))
+    const { realName, password, mobile } = req.body || {}
+    if (!realName && !mobile) {
+      return res.send(GetResponseData(CONST_NUM.ERROR))
+    }
+    const errMsg = (realName && VALIDATOR.realName(realName)) || (mobile && VALIDATOR.mobile(mobile)) || (password && VALIDATOR.password(password))
     if (errMsg) {
       return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
     }
 
     const updateTime = timeUtil.getTime(timeUtil.newDate())
-    userDao.update(id, updateTime, username, "", "", "", "", password).then(() => {
+    userDao.update(id, updateTime, "", mobile, realName, "", "", "", password).then(() => {
       res.send(GetResponseData({ updateTime }))
     }).catch(() => {
       res.send(GetResponseData(CONST_NUM.ERROR))
@@ -153,19 +168,26 @@ const install = function (app) {
    * 用户登录
    */
   app.post(NO_AUTH_PATH + USER_PATH + '/login', function (req, res) {
-    const { mobile, password, rand } = req.body || {}
-    const errMsg = VALIDATOR.mobile(mobile) || VALIDATOR.username(password)
-    if (errMsg) {
-      return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
+    const { username, mobile, password, rand } = req.body || {}
+    if (username) {
+      const errMsg = VALIDATOR.username(username) || VALIDATOR.password(password) || VALIDATOR.rand(rand)
+      if (errMsg) {
+        return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
+      }
+    } else if (mobile) {
+      const errMsg = VALIDATOR.mobile(mobile) || VALIDATOR.password(password) || VALIDATOR.rand(rand)
+      if (errMsg) {
+        return res.send(GetResponseData(CONST_NUM.ERROR, errMsg))
+      }
+    } else {
+      return res.send(GetResponseData(CONST_NUM.ERROR))
     }
 
-    userDao.login(mobile, password).then((resp) => {
+    userDao.login(mobile, username).then((resp) => {
       const user = resp[0]
-      if (!user) {
-        return res.send(GetResponseData(CONST_NUM.ERROR, "手机号码未注册或密码错误"))
-      }
-      if (dataUtil.md5(user.password + '_' + rand) !== password) {
-        return res.send(GetResponseData(CONST_NUM.ERROR, '用户名或密码错误'))
+      if (!user || dataUtil.md5(user.password + '_' + rand) !== password) {
+        const msg = mobile ? '手机号码未注册或密码错误' : '用户名未注册或密码错误'
+        return res.send(GetResponseData(CONST_NUM.ERROR, msg))
       }
       delete user.password
       user.token = auth.newToken(user)

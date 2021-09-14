@@ -5,6 +5,7 @@ CREATE TABLE `user` (
 `id`  bigint NOT NULL ,
 `user_name`  varchar(255) NULL ,
 `password`  varchar(255) NULL ,
+`real_name`  varchar(255) NULL ,
 `mobile`  varchar(11) NOT NULL ,
 `level`  int NOT NULL DEFAULT 1,
 `dept_id`  bigint NULL ,
@@ -15,6 +16,8 @@ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ALTER TABLE `user` ADD UNIQUE INDEX (`mobile`) ;
+ALTER TABLE `user` MODIFY COLUMN `user_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL AFTER `id`, ADD UNIQUE INDEX `user_name` (`user_name`) USING HASH ;
+-- ALTER TABLE `user` ADD COLUMN `real_name`  varchar(255) NULL AFTER `password`;
 
 CREATE TABLE `administrative_division` (
   `id` int NOT NULL,

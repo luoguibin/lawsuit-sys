@@ -1,7 +1,10 @@
 <template>
   <el-form ref="form" :model="formData" :rules="formRules" label-width="100px">
-    <el-form-item label="手机号码" prop="mobile">
+    <!-- <el-form-item label="手机号码" prop="mobile">
       <el-input v-model="formData.mobile"></el-input>
+    </el-form-item> -->
+    <el-form-item label="用户名" prop="username">
+      <el-input v-model="formData.username"></el-input>
     </el-form-item>
     <el-form-item label="密码" prop="password">
       <el-input
@@ -30,11 +33,13 @@ export default {
     return {
       loading: false,
       formData: {
-        mobile: "",
+        // mobile: "",
+        username: "",
         password: "",
       },
       formRules: {
-        mobile: { required: true, message: "手机号码不能为空" },
+        // mobile: { required: true, message: "手机号码不能为空" },
+        username: { required: true, message: "用户不能为空" },
         password: { required: true, message: "密码不能为空" },
       },
     };
@@ -53,7 +58,8 @@ export default {
 
         this.loading = true;
         apiPostData(apiURL.login, {
-          mobile: this.formData.mobile,
+          // mobile: this.formData.mobile,
+          username: this.formData.username,
           password,
           rand,
         })

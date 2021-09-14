@@ -10,12 +10,16 @@
       <el-input :value="formData.id" readonly></el-input>
     </el-form-item>
 
-    <el-form-item label="用户名">
-      <el-input v-model="formData.username" :readonly="!isEdit"></el-input>
+    <el-form-item label="真实姓名">
+      <el-input v-model="formData.realName" :readonly="!isEdit"></el-input>
     </el-form-item>
 
     <el-form-item label="手机号码">
       <el-input :value="formData.mobile" readonly></el-input>
+    </el-form-item>
+
+    <el-form-item label="用户名">
+      <el-input v-model="formData.username" readonly></el-input>
     </el-form-item>
 
     <el-form-item label="密码">
@@ -72,6 +76,7 @@ export default {
       formData: {
         id: "",
         username: "",
+        realName: "",
         mobile: "",
         password: "",
         level: "",
@@ -79,7 +84,7 @@ export default {
         postName: "",
       },
       formRules: {
-        username: { required: true, message: "用户名不能为空" },
+        realName: { required: true, message: "真实姓名不能为空" },
       },
     };
   },
@@ -125,7 +130,7 @@ export default {
         this.loading = true;
 
         const params = {
-          username: this.formData.username,
+          realName: this.formData.realName,
         };
         if (this.formData.password) {
           params.password = Base64.stringify(Md5(this.formData.password));
@@ -134,7 +139,7 @@ export default {
           .then(({ data }) => {
             this.$message.success("更新成功");
             this.$commit.updateUser({
-              username: this.formData.username,
+              realName: this.formData.realName,
               createTime: data.createTime,
             });
             this.onToggleEdit(false);

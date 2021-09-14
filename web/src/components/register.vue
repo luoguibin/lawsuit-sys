@@ -3,15 +3,18 @@
     <el-form-item label="用户名" prop="username">
       <el-input v-model="formData.username"></el-input>
     </el-form-item>
-    <el-form-item label="手机号码" prop="mobile">
-      <el-input v-model="formData.mobile"></el-input>
-    </el-form-item>
     <el-form-item label="密码" prop="password">
       <el-input
         v-model="formData.password"
         type="password"
         @keyup.enter="onRegister"
       ></el-input>
+    </el-form-item>
+    <el-form-item label="手机号码" prop="mobile">
+      <el-input v-model="formData.mobile"></el-input>
+    </el-form-item>
+    <el-form-item label="真实姓名" prop="realName">
+      <el-input v-model="formData.realName"></el-input>
     </el-form-item>
     <el-form-item class="align-center" label-width="0">
       <el-button type="primary" @click="onRegister" :loading="loading"
@@ -36,11 +39,13 @@ export default {
         username: "",
         password: "",
         mobile: "",
+        realName: "",
       },
       formRules: {
         username: { required: true, message: "用户名不能为空" },
         password: { required: true, message: "密码不能为空" },
         mobile: { required: true, message: "手机号码不能为空" },
+        realName: { required: true, message: "真实姓名不能为空" },
       },
     };
   },
@@ -57,6 +62,7 @@ export default {
           username: this.formData.username,
           mobile: this.formData.mobile,
           password: Base64.stringify(Md5(this.formData.password)),
+          realName: this.formData.realName,
         })
           .then(() => {
             this.$emit("register");

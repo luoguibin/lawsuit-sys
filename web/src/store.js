@@ -5,6 +5,7 @@ const definedUser = {
   token: "",
   username: "",
   mobile: "",
+  realName: "",
   level: "",
   deptId: "",
   postId: "",
@@ -45,7 +46,13 @@ export const commit = {
   }
 }
 
-commit.setUser(JSON.parse(decodeURIComponent(localStorage.getItem("ls_user") || "") || "{}"), false)
+const cacheValue = '20210914'
+if (localStorage.getItem('ls_cache') !== cacheValue) {
+  localStorage.clear()
+  localStorage.setItem('ls_cache', cacheValue)
+} else {
+  commit.setUser(JSON.parse(decodeURIComponent(localStorage.getItem("ls_user") || "") || "{}"), false)
+}
 
 export default {
   install: function (app) {
